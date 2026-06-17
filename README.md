@@ -23,11 +23,11 @@ In this document, I aim to outline some of the common challenges associated with
 
 ## New Categories In Categorical Data
 
-Often times recurring data will include some kind of categorical variable with a large number of options.  Examples might be fault codes, cities, or colors. A common pitfall in designing recurring data systems around this sort of data, is that the number of categories isn't always known ahead of time.  Depending on how that data is produced, you could see only red, blue, and green for the first year, then finally see a rare yellow.  If you system cannot handle in some way (by ignoring or accomodating) previously unseen categories, it is fragile to these changes.
+Often times recurring data will include some kind of categorical variable with a large number of options.  Examples might be fault codes, cities, or colors. A common pitfall in designing recurring data systems around this sort of data, is that the number of categories isn't always known ahead of time.  Depending on how that data is produced, you could see only red, blue, and green for the first year, then finally see a rare yellow.  If your system cannot handle in some way (by ignoring or accommodating) previously unseen categories, it is fragile to these changes.
 
 ## Changing Notation for Missing Values
 
-Over long periods of time, the systems producing, storing and eventually sending your system data will change.  In the best case, it is simply version changes in the same software, but occasionally, the systems themselves may change (as a company migrates from Oracle to SAP, for instance). In some of these cases, notation for missing values could change in formats like csv.  If the format of the data you are receiving is prone to this kind of vulnerability, be careful to accomodate many common notations for missing values, even if the data you've seen so far doesn't use them (yet).
+Over long periods of time, the systems producing, storing and eventually sending your system data will change.  In the best case, it is simply version changes in the same software, but occasionally, the systems themselves may change (as a company migrates from Oracle to SAP, for instance). In some of these cases, notation for missing values could change in formats like csv.  If the format of the data you are receiving is prone to this kind of vulnerability, be careful to accommodate many common notations for missing values, even if the data you've seen so far doesn't use them (yet).
 
 ## Changing Datetime Notation
 
@@ -60,4 +60,4 @@ Different source systems have differing amounts of latency.  So one daily file m
 Contributing
 ============
 
-I'm sure that I've missed many points here.  If you know of any, or what to help elaborate on those that are here, gimme a pull request.
+I'm sure that I've missed many points here.  If you know of any, or want to help elaborate on those that are here, gimme a pull request.
