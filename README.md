@@ -61,3 +61,5 @@ Contributing
 ============
 
 I'm sure that I've missed many points here.  If you know of any, or want to help elaborate on those that are here, gimme a pull request.
+
+## License — [Creative Commons Attribution 4.0 International](LICENSE)
