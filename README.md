@@ -17,6 +17,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [Only able to send data in event driven fashion](#only-able-to-send-data-in-event-driven-fashion)
  * [Can only email data](#can-only-email-data)
  * [Unable to dedupe across files](#unable-to-dedupe-across-files)
+ * [Late-arriving corrections and restated history](#late-arriving-corrections-and-restated-history)
  * [Mixed update intervals](#mixed-update-intervals)
  * [Inconsistent data latency](#inconsistent-data-latency)
 
@@ -53,6 +54,10 @@ A surprising number of companies, to avoid dealing with the redtape of opening p
 ## Unable to Dedupe Across Files
 
 In many cases, a customer will send a file every so often (say, daily), which may contains records from the previous period's file.  Each individual file has no duplicates, but the union of the two files does have duplicates.
+
+## Late-Arriving Corrections And Restated History
+
+Some sources revise records they have already delivered, through corrections, backfills or restatements.  Unlike the duplicates above, the keys match but the values have changed, so a naive dedupe may keep the stale row or the wrong one.  A recurring system needs a rule for which version wins, and ideally keeps what was known as of each delivery.  Otherwise, retraining on the latest data quietly rewrites history, and a backtest or earlier model can no longer be reproduced or fairly evaluated.
 
 ## Mixed Update Intervals
 
