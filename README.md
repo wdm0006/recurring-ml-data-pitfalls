@@ -12,6 +12,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [New categories in categorical data](#new-categories-in-categorical-data)
  * [Changing notation for missing values](#changing-notation-for-missing-values)
  * [Changing datetime notation](#changing-datetime-notation)
+ * [Schema and column drift](#schema-and-column-drift)
  * [Unable to send data in event driven fashion](#unable-to-send-data-in-event-driven-fashion)
  * [Only able to send data in event driven fashion](#only-able-to-send-data-in-event-driven-fashion)
  * [Can only email data](#can-only-email-data)
@@ -32,6 +33,10 @@ Over long periods of time, the systems producing, storing and eventually sending
 ## Changing Datetime Notation
 
 Both the timezone and the format itself of timestamps is subject to change over time, surprisingly. A robust recurring system can identify when these changes happen and react accordingly.
+
+## Schema And Column Drift
+
+Between deliveries, the structure of a file can change even when the values look fine: columns get renamed, added, dropped or reordered.  A system that parses by position will quietly read the wrong data into the wrong field after a reorder, while one that parses by name may silently ignore a new column or turn a missing one into nulls.  Neither fails loudly, so the damage shows up later as degraded results.  A robust recurring system compares each delivery's columns against what it expects and flags structural changes rather than guessing.
 
 ## Unable to Send Data in Event Driven Fashion
 
