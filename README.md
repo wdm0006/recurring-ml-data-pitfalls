@@ -17,6 +17,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [Only able to send data in event driven fashion](#only-able-to-send-data-in-event-driven-fashion)
  * [Can only email data](#can-only-email-data)
  * [Unable to dedupe across files](#unable-to-dedupe-across-files)
+ * [Partial or truncated deliveries](#partial-or-truncated-deliveries)
  * [Late-arriving corrections and restated history](#late-arriving-corrections-and-restated-history)
  * [Mixed update intervals](#mixed-update-intervals)
  * [Inconsistent data latency](#inconsistent-data-latency)
@@ -54,6 +55,10 @@ A surprising number of companies, to avoid dealing with the redtape of opening p
 ## Unable to Dedupe Across Files
 
 In many cases, a customer will send a file every so often (say, daily), which may contains records from the previous period's file.  Each individual file has no duplicates, but the union of the two files does have duplicates.
+
+## Partial Or Truncated Deliveries
+
+A scheduled file or batch can arrive with fewer rows than the source holds: an upload cut off midway, a timeout, a missing partition or one shard that never landed.  The file parses cleanly and the columns are right, so nothing errors and it is ingested as if complete.  A missing day is also indistinguishable from a quiet day, so a gap in the data looks like a real signal.  A recurring system ends up silently training or scoring on the hole.  Completeness needs a signal independent of the file itself, such as expected row counts from the sender, manifests or checksums, or row-count bands drawn from history.
 
 ## Late-Arriving Corrections And Restated History
 
