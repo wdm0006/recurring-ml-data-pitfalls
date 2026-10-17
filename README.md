@@ -12,6 +12,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [New categories in categorical data](#new-categories-in-categorical-data)
  * [Changing notation for missing values](#changing-notation-for-missing-values)
  * [Changing datetime notation](#changing-datetime-notation)
+ * [Unit and scale changes in numeric fields](#unit-and-scale-changes-in-numeric-fields)
  * [Schema and column drift](#schema-and-column-drift)
  * [Unable to send data in event driven fashion](#unable-to-send-data-in-event-driven-fashion)
  * [Only able to send data in event driven fashion](#only-able-to-send-data-in-event-driven-fashion)
@@ -35,6 +36,10 @@ Over long periods of time, the systems producing, storing and eventually sending
 ## Changing Datetime Notation
 
 Both the timezone and the format itself of timestamps is subject to change over time, surprisingly. A robust recurring system can identify when these changes happen and react accordingly.
+
+## Unit And Scale Changes In Numeric Fields
+
+Between deliveries, the same numeric column can silently change units, currency, scale or rounding while its name and type stay the same.  Examples might be amounts switching from cents to dollars, weights from kilograms to pounds, or counts from thousands to individual units.  The values are still valid numbers and pass type and schema checks, so the damage may show up as degraded predictions rather than an error.  A robust recurring system treats units, currency, scale and precision as part of the data contract, and compares incoming ranges against history to flag unexpected changes.
 
 ## Schema And Column Drift
 
