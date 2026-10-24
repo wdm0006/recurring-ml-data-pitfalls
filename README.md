@@ -14,6 +14,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [Changing datetime notation](#changing-datetime-notation)
  * [Unit and scale changes in numeric fields](#unit-and-scale-changes-in-numeric-fields)
  * [Schema and column drift](#schema-and-column-drift)
+ * [File encoding and delimiter changes](#file-encoding-and-delimiter-changes)
  * [Unable to send data in event driven fashion](#unable-to-send-data-in-event-driven-fashion)
  * [Only able to send data in event driven fashion](#only-able-to-send-data-in-event-driven-fashion)
  * [Can only email data](#can-only-email-data)
@@ -44,6 +45,10 @@ Between deliveries, the same numeric column can silently change units, currency,
 ## Schema And Column Drift
 
 Between deliveries, the structure of a file can change even when the values look fine: columns get renamed, added, dropped or reordered.  A system that parses by position will quietly read the wrong data into the wrong field after a reorder, while one that parses by name may silently ignore a new column or turn a missing one into nulls.  Neither fails loudly, so the damage shows up later as degraded results.  A robust recurring system compares each delivery's columns against what it expects and flags structural changes rather than guessing.
+
+## File Encoding And Delimiter Changes
+
+Between deliveries, the file format itself can change while the content stays the same: the character encoding moves from UTF-8 to Latin-1 or Windows-1252, a byte-order mark appears, the delimiter switches from comma to semicolon or tab, or the quoting, line endings or decimal separator change.  The first samples parse fine, and the change usually arrives with an exporter upgrade or a locale change on the sender's side.  Some of these fail loudly, but many do not: a new delimiter can collapse a row into a single column, a decimal comma can turn numbers into strings or shift digits, mojibake in labels shows up as new categories, and a BOM can glue itself onto the first column name.  A robust recurring system declares the expected encoding, delimiter, quoting and decimal separator in the data contract, checks each file against them, and fails on an unexpected parse shape rather than guessing.
 
 ## Unable to Send Data in Event Driven Fashion
 
