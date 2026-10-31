@@ -19,6 +19,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [Only able to send data in event driven fashion](#only-able-to-send-data-in-event-driven-fashion)
  * [Can only email data](#can-only-email-data)
  * [Unable to dedupe across files](#unable-to-dedupe-across-files)
+ * [Duplicate-delivery replays](#duplicate-delivery-replays)
  * [Partial or truncated deliveries](#partial-or-truncated-deliveries)
  * [Late-arriving corrections and restated history](#late-arriving-corrections-and-restated-history)
  * [Mixed update intervals](#mixed-update-intervals)
@@ -65,6 +66,10 @@ A surprising number of companies, to avoid dealing with the redtape of opening p
 ## Unable to Dedupe Across Files
 
 In many cases, a customer will send a file every so often (say, daily), which may contains records from the previous period's file.  Each individual file has no duplicates, but the union of the two files does have duplicates.
+
+## Duplicate-Delivery Replays
+
+A provider or transport can send the same file or event batch again: a retry after a timeout, at-least-once delivery, a re-run job or a manual resend.  Unlike the overlapping files above, the whole delivery is repeated, and it is byte-identical or nearly so, so it passes every format and schema check.  Nothing errors: counts, sums and training rows are inflated, and an unusual day gets double weight.  Recurring systems are exposed because the same delivery is expected to show up again on the next run, with no human watching to notice the second copy.  A robust recurring system makes loads idempotent by keying them on file or batch identifiers and content hashes, and checks a ledger of what has already been delivered before ingesting anything.
 
 ## Partial Or Truncated Deliveries
 
