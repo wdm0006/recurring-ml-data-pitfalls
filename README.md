@@ -33,15 +33,15 @@ Often times recurring data will include some kind of categorical variable with a
 
 ## Changing Notation for Missing Values
 
-Over long periods of time, the systems producing, storing and eventually sending your system data will change.  In the best case, it is simply version changes in the same software, but occasionally, the systems themselves may change (as a company migrates from Oracle to SAP, for instance). In some of these cases, notation for missing values could change in formats like csv.  If the format of the data you are receiving is prone to this kind of vulnerability, be careful to accommodate many common notations for missing values, even if the data you've seen so far doesn't use them (yet).
+Over long periods of time, the systems producing, storing and eventually sending your system data will change.  In the best case, it is simply version changes in the same software, but occasionally, the systems themselves may change (as a company migrates from Oracle to SAP, for instance). In some of these cases, notation for missing values could change in formats like csv.  If the format of the data you are receiving is prone to this kind of vulnerability, be careful to accommodate many common notations for missing values, even if the data you've seen so far doesn't use them (yet). See also Quartz: [Zeros replace missing values](https://github.com/Quartz/bad-data-guide#zeros-replace-missing-values).
 
 ## Changing Datetime Notation
 
-Both the timezone and the format itself of timestamps is subject to change over time, surprisingly. A robust recurring system can identify when these changes happen and react accordingly.
+Both the timezone and the format itself of timestamps is subject to change over time, surprisingly. A robust recurring system can identify when these changes happen and react accordingly. See also Quartz: [Date formats are inconsistent](https://github.com/Quartz/bad-data-guide#date-formats-are-inconsistent).
 
 ## Unit And Scale Changes In Numeric Fields
 
-Between deliveries, the same numeric column can silently change units, currency, scale or rounding while its name and type stay the same.  Examples might be amounts switching from cents to dollars, weights from kilograms to pounds, or counts from thousands to individual units.  The values are still valid numbers and pass type and schema checks, so the damage may show up as degraded predictions rather than an error.  A robust recurring system treats units, currency, scale and precision as part of the data contract, and compares incoming ranges against history to flag unexpected changes.
+Between deliveries, the same numeric column can silently change units, currency, scale or rounding while its name and type stay the same.  Examples might be amounts switching from cents to dollars, weights from kilograms to pounds, or counts from thousands to individual units.  The values are still valid numbers and pass type and schema checks, so the damage may show up as degraded predictions rather than an error.  A robust recurring system treats units, currency, scale and precision as part of the data contract, and compares incoming ranges against history to flag unexpected changes. See also Quartz: [Units are not specified](https://github.com/Quartz/bad-data-guide#units-are-not-specified).
 
 ## Schema And Column Drift
 
@@ -49,7 +49,7 @@ Between deliveries, the structure of a file can change even when the values look
 
 ## File Encoding And Delimiter Changes
 
-Between deliveries, the file format itself can change while the content stays the same: the character encoding moves from UTF-8 to Latin-1 or Windows-1252, a byte-order mark appears, the delimiter switches from comma to semicolon or tab, or the quoting, line endings or decimal separator change.  The first samples parse fine, and the change usually arrives with an exporter upgrade or a locale change on the sender's side.  Some of these fail loudly, but many do not: a new delimiter can collapse a row into a single column, a decimal comma can turn numbers into strings or shift digits, mojibake in labels shows up as new categories, and a BOM can glue itself onto the first column name.  A robust recurring system declares the expected encoding, delimiter, quoting and decimal separator in the data contract, checks each file against them, and fails on an unexpected parse shape rather than guessing.
+Between deliveries, the file format itself can change while the content stays the same: the character encoding moves from UTF-8 to Latin-1 or Windows-1252, a byte-order mark appears, the delimiter switches from comma to semicolon or tab, or the quoting, line endings or decimal separator change.  The first samples parse fine, and the change usually arrives with an exporter upgrade or a locale change on the sender's side.  Some of these fail loudly, but many do not: a new delimiter can collapse a row into a single column, a decimal comma can turn numbers into strings or shift digits, mojibake in labels shows up as new categories, and a BOM can glue itself onto the first column name.  A robust recurring system declares the expected encoding, delimiter, quoting and decimal separator in the data contract, checks each file against them, and fails on an unexpected parse shape rather than guessing. See also Quartz: [Text is garbled](https://github.com/Quartz/bad-data-guide#text-is-garbled).
 
 ## Unable to Send Data in Event Driven Fashion
 
@@ -65,15 +65,15 @@ A surprising number of companies, to avoid dealing with the redtape of opening p
 
 ## Unable to Dedupe Across Files
 
-In many cases, a customer will send a file every so often (say, daily), which may contains records from the previous period's file.  Each individual file has no duplicates, but the union of the two files does have duplicates.
+In many cases, a customer will send a file every so often (say, daily), which may contains records from the previous period's file.  Each individual file has no duplicates, but the union of the two files does have duplicates. See also Quartz: [Rows or values are duplicated](https://github.com/Quartz/bad-data-guide#rows-or-values-are-duplicated).
 
 ## Duplicate-Delivery Replays
 
-A provider or transport can send the same file or event batch again: a retry after a timeout, at-least-once delivery, a re-run job or a manual resend.  Unlike the overlapping files above, the whole delivery is repeated, and it is byte-identical or nearly so, so it passes every format and schema check.  Nothing errors: counts, sums and training rows are inflated, and an unusual day gets double weight.  Recurring systems are exposed because the same delivery is expected to show up again on the next run, with no human watching to notice the second copy.  A robust recurring system makes loads idempotent by keying them on file or batch identifiers and content hashes, and checks a ledger of what has already been delivered before ingesting anything.
+A provider or transport can send the same file or event batch again: a retry after a timeout, at-least-once delivery, a re-run job or a manual resend.  Unlike the overlapping files above, the whole delivery is repeated, and it is byte-identical or nearly so, so it passes every format and schema check.  Nothing errors: counts, sums and training rows are inflated, and an unusual day gets double weight.  Recurring systems are exposed because the same delivery is expected to show up again on the next run, with no human watching to notice the second copy.  A robust recurring system makes loads idempotent by keying them on file or batch identifiers and content hashes, and checks a ledger of what has already been delivered before ingesting anything. See also Quartz: [Rows or values are duplicated](https://github.com/Quartz/bad-data-guide#rows-or-values-are-duplicated).
 
 ## Partial Or Truncated Deliveries
 
-A scheduled file or batch can arrive with fewer rows than the source holds: an upload cut off midway, a timeout, a missing partition or one shard that never landed.  The file parses cleanly and the columns are right, so nothing errors and it is ingested as if complete.  A missing day is also indistinguishable from a quiet day, so a gap in the data looks like a real signal.  A recurring system ends up silently training or scoring on the hole.  Completeness needs a signal independent of the file itself, such as expected row counts from the sender, manifests or checksums, or row-count bands drawn from history.
+A scheduled file or batch can arrive with fewer rows than the source holds: an upload cut off midway, a timeout, a missing partition or one shard that never landed.  The file parses cleanly and the columns are right, so nothing errors and it is ingested as if complete.  A missing day is also indistinguishable from a quiet day, so a gap in the data looks like a real signal.  A recurring system ends up silently training or scoring on the hole.  Completeness needs a signal independent of the file itself, such as expected row counts from the sender, manifests or checksums, or row-count bands drawn from history. See also Quartz: [Data are missing you know should be there](https://github.com/Quartz/bad-data-guide#data-are-missing-you-know-should-be-there).
 
 ## Late-Arriving Corrections And Restated History
 
