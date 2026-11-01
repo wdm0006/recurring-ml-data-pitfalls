@@ -22,6 +22,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [Duplicate-delivery replays](#duplicate-delivery-replays)
  * [Partial or truncated deliveries](#partial-or-truncated-deliveries)
  * [Late-arriving corrections and restated history](#late-arriving-corrections-and-restated-history)
+ * [Silent source backfills](#silent-source-backfills)
  * [Mixed update intervals](#mixed-update-intervals)
  * [Inconsistent data latency](#inconsistent-data-latency)
 
@@ -78,6 +79,10 @@ A scheduled file or batch can arrive with fewer rows than the source holds: an u
 ## Late-Arriving Corrections And Restated History
 
 Some sources revise records they have already delivered, through corrections, backfills or restatements.  Unlike the duplicates above, the keys match but the values have changed, so a naive dedupe may keep the stale row or the wrong one.  A recurring system needs a rule for which version wins, and ideally keeps what was known as of each delivery.  Otherwise, retraining on the latest data quietly rewrites history, and a backtest or earlier model can no longer be reproduced or fairly evaluated.
+
+## Silent Source Backfills
+
+A provider can quietly bulk-load older records or rewrite historical values without a correction notice.  A sample or first delivery looks stable, but later loads contain history that was absent or different when earlier models were trained or evaluated.  Format and schema checks still pass, while an incremental loader may miss the changes entirely and a full reload silently changes training data, features or evaluation results.  Related to [late-arriving corrections and restated history](#late-arriving-corrections-and-restated-history), this is easy to miss when a recurring system only checks the newest period.  A robust recurring system snapshots or versions each delivery, diffs historical windows on every load, and alerts when old partitions change.
 
 ## Mixed Update Intervals
 
