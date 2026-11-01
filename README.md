@@ -92,4 +92,6 @@ Contributing
 
 I'm sure that I've missed many points here.  If you know of any, or want to help elaborate on those that are here, gimme a pull request.
 
+A note for new entries: where possible, try to name the visible symptom, one cheap way to detect it, and one mitigation, in prose within the single description paragraph. This is guidance for new entries only, not a mandate to rewrite existing ones.
+
 ## License — [Creative Commons Attribution 4.0 International](LICENSE)
