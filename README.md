@@ -24,6 +24,7 @@ In this document, I aim to outline some of the common challenges associated with
  * [Late-arriving corrections and restated history](#late-arriving-corrections-and-restated-history)
  * [Mixed update intervals](#mixed-update-intervals)
  * [Inconsistent data latency](#inconsistent-data-latency)
+ * [Timezone and DST shifts in delivery schedules](#timezone-and-dst-shifts-in-delivery-schedules)
 
 # Descriptions
 
@@ -86,6 +87,10 @@ Often, different source systems will have different update intervals.  So one fi
 ## Inconsistent Data Latency
 
 Different source systems have differing amounts of latency.  So one daily file may contain at most recent data from one hour ago, while another may be at best 8 hours old.
+
+## Timezone And DST Shifts In Delivery Schedules
+
+Delivery times and timestamps defined in a local timezone move relative to UTC twice a year at daylight saving changes, and again whenever a provider relocates or changes its server's timezone.  A file scheduled for 02:30 local time may run twice, or not at all, on the night the clocks change, and a window that is always "24 hours" long is 23 or 25 hours on those days, so files seem to arrive an hour late or early.  Nothing errors: an hour of data is duplicated or missing (not just misplaced, unlike the plain format changes above), and an unusual day gets double or half weight.  Recurring systems are exposed because the same schedule runs unattended through every change, and the symptom appears only in the hours around it.  A robust recurring system carries explicit UTC offsets or zone names in the data contract, schedules and windows by UTC, and tests ingestion across spring-forward and fall-back boundaries, checking per-hour row counts for gaps or doubled hours.  See also Quartz: [Date formats are inconsistent](https://github.com/Quartz/bad-data-guide#date-formats-are-inconsistent).
 
 Contributing
 ============
